@@ -23,7 +23,7 @@ let package = Package(
 
         .testTarget(
             name: "Scheduler Tests",
-            dependencies: ["Scheduler"],
+            dependencies: [.target(name: "Scheduler")],
             path: "Tests/Scheduler Tests"
         ),
     ],
@@ -31,10 +31,14 @@ let package = Package(
 )
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
-    let membrane: [SwiftSetting] = [
-        .enableUpcomingFeature("MemberImportVisibility"),
-        .enableUpcomingFeature("InternalImportsByDefault"),
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        .enableUpcomingFeature("InferIsolatedConformances"),
+        .enableExperimentalFeature("Lifetimes"),
+        .treatAllWarnings(as: .error),
     ]
-    target.swiftSettings = (target.swiftSettings ?? []) + membrane
 }
